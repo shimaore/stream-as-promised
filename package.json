@@ -1,6 +1,6 @@
 {
   "name": "stream-as-promised",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Stream (especially pipes) as promise(d)",
   "main": "index.js",
   "scripts": {
