@@ -24,6 +24,15 @@ One might also detect individual events on a stream:
       console.log("Done reading.");
     })
 
+The original stream is always available, so even though you cannot use the stream-as-promised as a replacment for the stream, you can still use it as storage for it:
+
+    var w = stream_as_promised(fs.createWriteStream('/dev/null'))
+    w
+    .once('drain')
+    .then(function(){
+      w.stream.write(some_chunk);
+    })
+
 Install
 =======
 

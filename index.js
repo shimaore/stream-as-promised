@@ -24,5 +24,6 @@ module.exports = function(stream) {
       }
     });
   };
+  result.stream = stream;
   return result;
 };
