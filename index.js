@@ -24,6 +24,13 @@ module.exports = function(stream) {
       }
     });
   };
+  result.write = function(chunk) {
+    if(stream.write(chunk)) {
+      return Promise.resolve();
+    } else {
+      return result.once('drain');
+    }
+  }
   result.stream = stream;
   return result;
 };
