@@ -1,7 +1,7 @@
 var Promise = require('bluebird');
 
 module.exports = function(stream) {
-  return new Promise(function(resolve,reject){
+  var result = new Promise(function(resolve,reject){
     try {
       /* Readable stream */
       stream.on('end',resolve);
@@ -13,4 +13,16 @@ module.exports = function(stream) {
       reject(error);
     }
   });
+  result.once = function(ev) {
+    return new Promise(function(resolve,reject){
+      try {
+        stream.once(ev,function(){
+          resolve.apply(this,arguments);
+        });
+      } catch(error) {
+        reject(error);
+      }
+    });
+  };
+  return result;
 };
