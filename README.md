@@ -33,16 +33,15 @@ The original stream is always available, so even though you cannot use the strea
       w.stream.write(some_chunk);
     })
 
-The later is used for example to implement a properly synchronizable `write` method:
+The `stream` is actually a [promisified](https://github.com/petkaantonov/bluebird/blob/master/API.md#promisification) version of the stream:
 
     var w = stream_as_promised(fs.createWriteStream('/dev/null'))
-    w
-    .write(chunk)
-    .then(function(){ // wait for 'drain'
-      w.write(some_chunk)
+    w.stream.writeAsync(chunk)
+    .then(function(){
+      w.stream.writeAsync(some_chunk)
     })
-    .then(function(){ // wait for 'drain'
-      w.write(some_other_chunk)
+    .then(function(){
+      w.stream.writeAsync(some_other_chunk)
     })
 
 Install

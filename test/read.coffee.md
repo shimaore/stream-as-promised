@@ -2,6 +2,9 @@
     chai.use require 'chai-as-promised'
     chai.should()
 
+    seconds = 1000
+
+    Promise = require 'bluebird'
     stream_as_promised = require '..'
     fs = require 'fs'
 
@@ -17,6 +20,12 @@
         stream.pipe fs.createWriteStream '/dev/null'
         uut = stream_as_promised(stream).once 'end'
         uut.should.be.fulfilled
+
+      it 'should miss inexisting events', ->
+        stream = fs.createReadStream '/etc/passwd'
+        stream.pipe fs.createWriteStream '/dev/null'
+        uut = stream_as_promised(stream).once('foo').timeout 500
+        uut.should.be.rejectedWith Promise.TimeoutError
 
       it 'should fail when needed', ->
         stream = fs.createReadStream '/etc/shadow'
@@ -45,3 +54,14 @@
         stream.pipe output
         uut = stream_as_promised output
         uut.should.be.rejectedWith Error
+
+      it 'should wait for drain', ->
+        @timeout 20*seconds
+        output = fs.createWriteStream '/dev/null'
+        chunk = new Buffer 10*1000*1000
+        uut = stream_as_promised output
+        uut.stream.writeAsync chunk
+        .then ->
+          uut.stream.writeAsync chunk
+        .then ->
+          uut.stream.end()
